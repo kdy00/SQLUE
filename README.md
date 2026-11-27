@@ -49,9 +49,9 @@ This game lets players experience SQL not as **syntax to memorize** but as **a t
 
 ### Requirements
 
-- Python [version — TBD]
+- Python 3.13 or later (tested on 3.13 and 3.15)
 - Tkinter: included in the official Python installers for Windows and macOS. On Linux it may need to be installed separately (for example, on Ubuntu: `sudo apt install python3-tk`).
-- [Other dependencies — TBD, listed in `pyproject.toml`]
+- No other packages are needed to play. Developers also need pytest, listed in `requirements-dev.txt`.
 
 ### Run the game
 
@@ -61,18 +61,17 @@ git clone https://github.com/kdy00/SQLUE.git
 cd SQLUE
 
 # 2. Start the game
-python -m [package-name]
+python -m sqlue
 ```
-
-<!-- TODO: If the src/ layout is used, add the install step needed before running (e.g. pip install -e .). -->
 
 ### Run the tests (for developers)
 
 ```bash
-[test command — TBD: pytest or unittest]
+python -m pip install -r requirements-dev.txt
+python -m pytest
 ```
 
-The tests cover the game logic: loading cases, running queries (including blocking queries that modify data), and checking answers. The Tkinter screens are not covered by automated tests. Tests run automatically on every pull request through GitHub Actions.
+The tests cover the case data and the game logic: loading cases, running queries (including blocking queries that modify data), and checking answers. The Tkinter screens are not covered by automated tests. Tests run automatically on every pull request through GitHub Actions, and a pull request cannot be merged until they pass. See [CONTRIBUTING.md](CONTRIBUTING.md#running-checks) for details.
 
 ## Example usage
 
@@ -101,13 +100,13 @@ SQLUE/
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md                  # How to report issues, branch, open PRs, and review
 ├── .gitignore
-├── pyproject.toml                   # Metadata, Python version, development dependencies
+├── requirements-dev.txt             # Development dependencies (pytest)
 │
 ├── .github/
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   ├── ISSUE_TEMPLATE/
 │   └── workflows/
-│       └── ci.yml                   # Runs the logic tests (Tkinter screens excluded)
+│       └── ci.yml                   # Runs the tests on Python 3.13 and 3.15 (Tkinter screens excluded)
 │
 ├── docs/
 │   ├── design.md                    # Architecture, module interfaces, decision log
@@ -117,20 +116,21 @@ SQLUE/
 │   └── case01/
 │       ├── schema.sql               # Table definitions
 │       ├── data.sql                 # Evidence data
+│       ├── solution.sql             # Reference solution, used by the data test
 │       └── case.json                # Introduction, hints, answer information
 │
-├── src/                             # [TBD: whether to use the src/ layout]
-│   └── [package-name]/
+├── sqlue/                           # Game package (no src/ layout)
+│   ├── __init__.py
+│   ├── __main__.py                  # Entry point for python -m sqlue
+│   ├── case_loader.py               # Reads cases from cases/ (no UI code)
+│   ├── database.py                  # Creates the database and runs queries (no UI code)
+│   ├── game.py                      # Game state and answer checking (no UI code)
+│   └── ui/
 │       ├── __init__.py
-│       ├── __main__.py              # Entry point for python -m [package-name]
-│       ├── case_loader.py           # Reads cases from cases/ (no UI code)
-│       ├── database.py              # Creates the database and runs queries (no UI code)
-│       ├── game.py                  # Game state and answer checking (no UI code)
-│       └── ui/
-│           ├── __init__.py
-│           └── app.py               # Tkinter screens and event wiring only
+│       └── app.py                   # Tkinter screens and event wiring only
 │
 └── tests/
+    ├── test_case01_data.py          # Case 001 data and solution.sql check
     ├── test_case_loader.py
     ├── test_database.py             # Includes tests for blocking data-modifying queries
     └── test_game.py
