@@ -42,9 +42,31 @@ Move your issue to the next column when its state changes, so the board always s
 
 ## Setting up the project
 
-[TBD — added when the project skeleton and CI are in place (#8).]
+You need **Python 3.13 or later**. The team develops with Python 3.13, and CI tests both 3.13 and 3.15.
 
-<!-- TODO: Python version, how to clone, how to create a virtual environment, and how to install development dependencies. Only add commands the team has actually run. -->
+1. Clone the repository and move into it:
+
+   ```bash
+   git clone https://github.com/kdy00/SQLUE.git
+   cd SQLUE
+   ```
+
+2. Create and activate a virtual environment, so that development tools stay separate from your other Python projects:
+
+   ```bash
+   python -m venv .venv
+   ```
+
+   - Windows: `.venv\Scripts\activate`
+   - macOS / Linux: `source .venv/bin/activate`
+
+3. Install the development dependencies (pytest):
+
+   ```bash
+   python -m pip install -r requirements-dev.txt
+   ```
+
+The game itself uses only the Python standard library, so no other packages are needed.
 
 ## Making a change
 
@@ -89,11 +111,23 @@ Move your issue to the next column when its state changes, so the board always s
 
 ## Running checks
 
-[TBD — the test command is added together with the CI workflow (#8).]
+Run all tests from the repository root:
 
-The automated tests cover the game logic only. Tkinter screens are checked manually; see `docs/manual-checks.md` (TBD).
+```bash
+python -m pytest
+```
 
-All tests also run automatically on every pull request through GitHub Actions. A pull request should not be merged while the checks are failing.
+Add `-v` to see the result of each test. Use `python -m pytest` rather than `pytest`, so that the `sqlue` package in the repository root can be imported by the tests.
+
+The automated tests cover the case data and the game logic. They must not import the UI package (`sqlue/ui/`), because the CI machine has no display. Tkinter screens are checked manually; see `docs/manual-checks.md` (TBD).
+
+### Continuous integration
+
+The workflow in `.github/workflows/ci.yml` runs the same command on **Python 3.13 and 3.15** on every pull request into `main` and on every push to `main`. The results appear as two checks on the pull request: `test (3.13)` and `test (3.15)`.
+
+Both checks are **required**: a pull request cannot be merged until they pass. If a check fails, open it from the pull request and read the log to see which test failed and why.
+
+If the Python versions in `ci.yml` are changed, the check names change too, so the required checks in the `main` branch protection settings must be updated at the same time.
 
 ## Opening a pull request
 
@@ -123,9 +157,9 @@ Discuss the reviewer's concerns in the pull request and resolve them before merg
 
 ## Merging
 
-The `main` branch is protected: a pull request needs an approving review before it can be merged.
+The `main` branch is protected: a pull request needs an approving review and passing CI checks before it can be merged.
 
-- The **author of the pull request** merges it, after the reviewer's concerns have been resolved, the reviewer has approved, and the checks have passed.
+- The **author of the pull request** merges it, after the reviewer's concerns have been resolved, the reviewer has approved, and the required checks (`test (3.13)` and `test (3.15)`) have passed.
 - After merging, check that the issue is closed and moved to **Done** on the board.
 
 ## Use of AI tools
