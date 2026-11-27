@@ -107,7 +107,7 @@ INSERT INTO cafe_purchases (student_id, item) VALUES
 (115, 'Matcha Latte'),
 (116, 'Americano'),
 (117, 'Americano'),
-(118, 'Matcha Latte'),
+(118, 'Americano'),
 (119, 'Matcha Latte'),
 (120, 'Chocolate Latte'),
 (121, 'Matcha Latte'),
@@ -116,4 +116,5 @@ INSERT INTO cafe_purchases (student_id, item) VALUES
 (124, 'Matcha Latte'),
 (125, 'Matcha Latte'),
 (126, 'Chocolate Latte'),
-(127, 'Strawberry Latte');
+(127, 'Strawberry Latte'),
+(999, 'Americano');
